@@ -1,4 +1,4 @@
-name: 🚀 Simple Project Generator
+name: 🚀 Simple - Project Generator
 
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: 🚀 Create Project Repository
+name: ⚡ Advanced - Create Project Repository
 
 on:
   workflow_dispatch:

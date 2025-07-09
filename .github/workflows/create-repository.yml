@@ -1,4 +1,4 @@
-name: 🏗️ Create & Deploy Project Repository
+name: 🏗️ Medium - Create & Deploy Repository
 
 on:
   workflow_dispatch:
