@@ -1,7 +1,7 @@
 name: ⚡ Advanced - Create Project Repository
 
 # NOTE: This workflow uses GitHub App authentication for repository creation
-# Requires APP_ID and APP_PRIVATE_KEY secrets to be configured
+# Requires ORG_APP_ID and ORG_PRIVATE_KEY secrets to be configured
 # See REPOSITORY_CREATION_SETUP.md for detailed setup instructions
 permissions:
   contents: read
@@ -85,8 +85,8 @@ jobs:
       uses: actions/create-github-app-token@v1
       id: app-token
       with:
-        app-id: ${{ secrets.APP_ID }}
-        private-key: ${{ secrets.APP_PRIVATE_KEY }}
+        app-id: ${{ secrets.ORG_APP_ID }}
+        private-key: ${{ secrets.ORG_PRIVATE_KEY }}
         owner: ${{ github.repository_owner }}
       
     - name: �🔧 Setup Node.js
@@ -193,7 +193,7 @@ jobs:
           } catch (error) {
             if (error.status === 403) {
               core.setFailed(`❌ Permission denied: Unable to create repository. Please ensure:
-              1. APP_ID and APP_PRIVATE_KEY secrets are properly configured
+              1. ORG_APP_ID and ORG_PRIVATE_KEY organization secrets are properly configured
               2. GitHub App has 'Repository administration' permissions
               3. GitHub App is installed on the target organization/account
               

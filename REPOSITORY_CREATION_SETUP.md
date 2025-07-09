@@ -42,16 +42,18 @@ This means the default `GITHUB_TOKEN` doesn't have permission to create reposito
 2. Install it on your account/organization
 3. Select repositories or "All repositories"
 
-#### Step 4: Add App Secrets to Repository
+#### Step 4: Add App Secrets to Organization
 
-1. Go to your repository → Settings → Secrets and variables → Actions
-2. Add these secrets:
-   - `APP_ID`: Your GitHub App ID (found in app settings)
-   - `APP_PRIVATE_KEY`: Contents of the `.pem` file
+1. Go to your organization → Settings → Secrets and variables → Actions
+2. Add these organization secrets:
+   - `ORG_APP_ID`: Your GitHub App ID (found in app settings)
+   - `ORG_PRIVATE_KEY`: Contents of the `.pem` file
+
+**Note:** Organization secrets are shared across all repositories in the organization, making them ideal for GitHub App authentication.
 
 #### Step 5: Update Workflows
 
-The workflows are already configured to use GitHub App authentication. They will automatically use the app token when `APP_ID` and `APP_PRIVATE_KEY` are available.
+The workflows are already configured to use GitHub App authentication. They will automatically use the app token when `ORG_APP_ID` and `ORG_PRIVATE_KEY` are available.
 
 ### Option 2: Personal Access Token (Simple Setup)
 
@@ -75,7 +77,7 @@ The workflows are already configured to use GitHub App authentication. They will
 ## 🎯 Workflow Behavior
 
 The workflows will use authentication in this order:
-1. GitHub App token (if `APP_ID` and `APP_PRIVATE_KEY` are configured)
+1. GitHub App token (if `ORG_APP_ID` and `ORG_PRIVATE_KEY` are configured)
 2. Personal Access Token (if `PAT_TOKEN` is configured)  
 3. Default `GITHUB_TOKEN` (limited permissions - will fail for repo creation)
 
