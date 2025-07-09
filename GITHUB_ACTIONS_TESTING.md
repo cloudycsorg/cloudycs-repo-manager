@@ -59,23 +59,25 @@ act --version
 
 #### **Working Act Commands:**
 
-**Option A: Using Input File**
+**Option A: Using Act-Compatible Workflow (Recommended)**
 ```bash
-# Create input file
-echo "template=terraform-aws
-project_name=test-terraform-project
-project_description=Test project generated with act
-author_name=Act Test" > act-inputs.json
-
-# Run with input file
+# Run the act-compatible workflow
 act workflow_dispatch \
-  -W .github/workflows/local-test.yml \
+  -W .github/workflows/act-test.yml \
   --input-file act-inputs.json \
+  --container-architecture linux/amd64 \
+  --bind
+
+# Or with direct inputs
+act workflow_dispatch \
+  -W .github/workflows/act-test.yml \
+  --input template=terraform-aws \
+  --input project_name=my-test-project \
   --container-architecture linux/amd64 \
   --bind
 ```
 
-**Option B: Direct Input Parameters**
+**Option B: Production Workflows (Requires GitHub Actions)**
 ```bash
 # Simple workflow
 act workflow_dispatch \

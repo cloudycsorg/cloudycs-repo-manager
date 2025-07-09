@@ -1,4 +1,4 @@
 template=terraform-aws
-project_name=test-terraform-project
+project_name=act-test-project
 project_description=Test project generated with act
 author_name=Act Test

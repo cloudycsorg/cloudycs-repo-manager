@@ -1,4 +1,4 @@
-name: 🧪 Local Test Workflow
+name: 🧪 Act-Compatible Local Test
 
 on:
   workflow_dispatch:
@@ -12,6 +12,7 @@ on:
           - terraform-aws
           - aws-cdk-python
           - python-fastapi
+          - next-js
       project_name:
         description: 'Project Name'
         required: true
@@ -23,20 +24,37 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: 📥 Checkout Repository
-      uses: actions/checkout@v4
-      
-    - name: 🔧 Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        
-    - name: 📦 Install Dependencies
+    - name: 📥 Verify Files Available
       run: |
-        echo "Installing dependencies with npm ci..."
-        npm ci
-      
+        echo "=== Environment Check ==="
+        pwd
+        echo "Available files:"
+        ls -la
+        echo ""
+        echo "Checking for key files:"
+        [ -f "package.json" ] && echo "✅ package.json found" || echo "❌ package.json missing"
+        [ -f "package-lock.json" ] && echo "✅ package-lock.json found" || echo "❌ package-lock.json missing"
+        [ -d "src" ] && echo "✅ src/ directory found" || echo "❌ src/ directory missing"
+        [ -d "templates" ] && echo "✅ templates/ directory found" || echo "❌ templates/ directory missing"
+        [ -f "bin/repo-manager.js" ] && echo "✅ CLI binary found" || echo "❌ CLI binary missing"
+        
+    - name: 🔧 Check Node.js Environment
+      run: |
+        echo "Node.js version: $(node --version)"
+        echo "NPM version: $(npm --version)"
+        echo "Working directory: $(pwd)"
+        
+    - name: 📦 Install Dependencies (Fallback)
+      run: |
+        echo "Attempting to install dependencies..."
+        if [ -f "package-lock.json" ]; then
+          echo "Using npm ci..."
+          npm ci
+        else
+          echo "package-lock.json not found, using npm install..."
+          npm install
+        fi
+        
     - name: 🎯 Validate Template
       run: |
         echo "🔍 Validating template: ${{ github.event.inputs.template }}"
