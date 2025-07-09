@@ -29,21 +29,23 @@
   "author": "CloudyCS",
   "license": "MIT",
   "dependencies": {
-    "commander": "^11.0.0",
-    "inquirer": "^8.2.5",
+    "boxen": "^5.1.2",
     "chalk": "^4.1.2",
-    "fs-extra": "^11.1.1",
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0",
+    "inquirer": "^8.2.6",
     "mustache": "^4.2.0",
-    "yaml": "^2.3.0",
-    "semver": "^7.5.0",
     "ora": "^5.4.1",
-    "boxen": "^5.1.2"
+    "semver": "^7.6.3",
+    "yaml": "^2.6.1"
   },
   "devDependencies": {
-    "jest": "^29.5.0",
-    "nodemon": "^3.0.0",
-    "eslint": "^8.44.0",
-    "prettier": "^3.0.0"
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.30.1",
+    "eslint": "^9.30.1",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.0",
+    "prettier": "^3.3.0"
   },
   "engines": {
     "node": ">=16.0.0"
