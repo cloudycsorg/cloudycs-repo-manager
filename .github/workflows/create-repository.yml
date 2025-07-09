@@ -1,7 +1,7 @@
 name: 🏗️ Medium - Create & Deploy Repository
 
-# NOTE: This workflow requires a Personal Access Token (PAT) with repo creation permissions
-# The default GITHUB_TOKEN cannot create repositories
+# NOTE: This workflow uses GitHub App authentication for repository creation
+# Requires APP_ID and APP_PRIVATE_KEY secrets to be configured
 permissions:
   contents: read
   actions: read
@@ -59,7 +59,15 @@ jobs:
     - name: 📥 Checkout Repository Manager
       uses: actions/checkout@v4
       
-    - name: 🔧 Setup Node.js
+    - name: � Get GitHub App Token
+      uses: actions/create-github-app-token@v1
+      id: app-token
+      with:
+        app-id: ${{ secrets.APP_ID }}
+        private-key: ${{ secrets.APP_PRIVATE_KEY }}
+        owner: ${{ github.repository_owner }}
+      
+    - name: �🔧 Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
@@ -128,11 +136,11 @@ jobs:
       id: create_repo
       uses: actions/github-script@v7
       with:
-        # Use PAT_TOKEN secret if available, fallback to GITHUB_TOKEN
-        github-token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+        # Use GitHub App token for repository creation
+        github-token: ${{ steps.app-token.outputs.token }}
         script: |
           try {
-            console.log('🔄 Attempting to create repository...');
+            console.log('🔄 Attempting to create repository with GitHub App...');
             const { data: repo } = await github.rest.repos.createForAuthenticatedUser({
               name: '${{ github.event.inputs.project_name }}',
               description: '${{ github.event.inputs.project_description }}',
@@ -149,15 +157,16 @@ jobs:
             return repo;
           } catch (error) {
             if (error.status === 403) {
-              console.log('❌ Permission Error: The GITHUB_TOKEN cannot create repositories.');
-              console.log('📋 To fix this, you need to:');
-              console.log('   1. Create a Personal Access Token (PAT) with "repo" permissions');
-              console.log('   2. Add it as a repository secret named "PAT_TOKEN"');
-              console.log('   3. Re-run this workflow');
+              console.log('❌ Permission Error: GitHub App lacks repository creation permissions.');
+              console.log('📋 To fix this, ensure your GitHub App has:');
+              console.log('   1. "Contents" permission: Write');
+              console.log('   2. "Administration" permission: Write');
+              console.log('   3. "Metadata" permission: Read');
+              console.log('   4. App must be installed on the target organization/user');
               console.log('');
-              console.log('📖 Guide: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token');
+              console.log('📖 Guide: https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app');
               console.log('⚠️  Skipping repository creation...');
-              core.setOutput('repo_url', 'Permission denied - PAT required');
+              core.setOutput('repo_url', 'Permission denied - Check GitHub App permissions');
               core.setOutput('clone_url', '');
               return null;
             } else if (error.status === 422) {
@@ -175,7 +184,7 @@ jobs:
           }
           
     - name: 🔄 Push to New Repository
-      if: ${{ github.event.inputs.push_to_new_repo == 'true' && steps.create_repo.outputs.repo_url != 'Permission denied - PAT required' }}
+      if: ${{ github.event.inputs.push_to_new_repo == 'true' && steps.create_repo.outputs.repo_url != 'Permission denied - Check GitHub App permissions' }}
       run: |
         cd generated/${{ github.event.inputs.project_name }}
         
@@ -193,9 +202,9 @@ jobs:
         Repository Manager: ${{ github.repository }}
         "
         
-        # Set up remote and push
+        # Set up remote and push using GitHub App token
         git branch -M main
-        git remote add origin https://x-access-token:${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}@github.com/${{ github.repository_owner }}/${{ github.event.inputs.project_name }}.git
+        git remote add origin https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${{ github.repository_owner }}/${{ github.event.inputs.project_name }}.git
         git push -u origin main
         
         echo "✅ Pushed to new repository"

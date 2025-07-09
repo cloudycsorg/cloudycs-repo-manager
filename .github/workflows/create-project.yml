@@ -1,6 +1,7 @@
 name: ⚡ Advanced - Create Project Repository
 
-# NOTE: This workflow requires a Personal Access Token (PAT) with repo creation permissions
+# NOTE: This workflow uses GitHub App authentication for repository creation
+# Requires APP_ID and APP_PRIVATE_KEY secrets to be configured
 # See REPOSITORY_CREATION_SETUP.md for detailed setup instructions
 permissions:
   contents: read
@@ -80,7 +81,15 @@ jobs:
     - name: 📥 Checkout Repository Manager
       uses: actions/checkout@v4
       
-    - name: 🔧 Setup Node.js
+    - name: � Get GitHub App Token
+      uses: actions/create-github-app-token@v1
+      id: app-token
+      with:
+        app-id: ${{ secrets.APP_ID }}
+        private-key: ${{ secrets.APP_PRIVATE_KEY }}
+        owner: ${{ github.repository_owner }}
+      
+    - name: �🔧 Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
@@ -168,18 +177,34 @@ jobs:
       if: ${{ github.event.inputs.create_repository == 'true' }}
       uses: actions/github-script@v7
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ steps.app-token.outputs.token }}
         script: |
-          const { data: repo } = await github.rest.repos.createForAuthenticatedUser({
-            name: '${{ github.event.inputs.project_name }}',
-            description: '${{ github.event.inputs.project_description }}',
-            private: ${{ github.event.inputs.repository_visibility == 'private' }},
-            auto_init: false
-          });
-          
-          console.log(`✅ Created repository: ${repo.html_url}`);
-          core.setOutput('repository_url', repo.html_url);
-          core.setOutput('repository_clone_url', repo.clone_url);
+          try {
+            const { data: repo } = await github.rest.repos.createForAuthenticatedUser({
+              name: '${{ github.event.inputs.project_name }}',
+              description: '${{ github.event.inputs.project_description }}',
+              private: ${{ github.event.inputs.repository_visibility == 'private' }},
+              auto_init: false
+            });
+            
+            console.log(`✅ Created repository: ${repo.html_url}`);
+            core.setOutput('repository_url', repo.html_url);
+            core.setOutput('repository_clone_url', repo.clone_url);
+          } catch (error) {
+            if (error.status === 403) {
+              core.setFailed(`❌ Permission denied: Unable to create repository. Please ensure:
+              1. APP_ID and APP_PRIVATE_KEY secrets are properly configured
+              2. GitHub App has 'Repository administration' permissions
+              3. GitHub App is installed on the target organization/account
+              
+              See REPOSITORY_CREATION_SETUP.md for detailed setup instructions.
+              
+              Error: ${error.message}`);
+            } else {
+              core.setFailed(`❌ Failed to create repository: ${error.message}`);
+            }
+            throw error;
+          }
           
     - name: 📤 Upload Generated Project
       uses: actions/upload-artifact@v4
@@ -192,7 +217,7 @@ jobs:
       if: ${{ github.event.inputs.create_repository == 'true' }}
       uses: actions/github-script@v7
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ steps.app-token.outputs.token }}
         script: |
           const fs = require('fs');
           const path = require('path');
