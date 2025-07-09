@@ -9,8 +9,6 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "build": "npm run build:templates",
-    "build:templates": "node scripts/build-templates.js",
     "test": "jest",
     "dev": "nodemon src/index.js",
     "lint": "eslint src/",

@@ -115,6 +115,7 @@ Thumbs.db
 # Test artifacts
 test-results/
 test-output/
+output/
 
 # Demo and temporary files (for this specific project)
 /tmp/
