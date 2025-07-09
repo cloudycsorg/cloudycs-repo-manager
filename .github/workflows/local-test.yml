@@ -1,0 +1,66 @@
+name: 🧪 Local Test Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      template:
+        description: 'Select Project Template'
+        required: true
+        default: 'terraform-aws'
+        type: choice
+        options:
+          - terraform-aws
+          - aws-cdk-python
+          - python-fastapi
+      project_name:
+        description: 'Project Name'
+        required: true
+        default: 'test-project'
+        type: string
+
+jobs:
+  test-generation:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Repository
+      run: |
+        echo "Simulating checkout - files should be available"
+        pwd
+        ls -la
+      
+    - name: 🔧 Setup Node.js (Manual)
+      run: |
+        echo "Node.js version:"
+        node --version
+        echo "NPM version:"
+        npm --version
+        
+    - name: 📦 Install Dependencies
+      run: |
+        echo "Installing dependencies with npm ci..."
+        npm ci
+      
+    - name: 🎯 Validate Template
+      run: |
+        echo "🔍 Validating template: ${{ github.event.inputs.template }}"
+        node bin/repo-manager.js validate templates/${{ github.event.inputs.template }}
+        
+    - name: 🏗️ Generate Project
+      run: |
+        echo "🚀 Generating project: ${{ github.event.inputs.project_name }}"
+        echo "Using template: ${{ github.event.inputs.template }}"
+        
+        mkdir -p output
+        node bin/repo-manager.js create \
+          --template ${{ github.event.inputs.template }} \
+          --name ${{ github.event.inputs.project_name }} \
+          --directory ./output \
+          --no-git \
+          --no-install
+          
+    - name: 📋 Show Results
+      run: |
+        echo "✅ Project generated successfully!"
+        echo "Generated files:"
+        find output -type f | head -20
