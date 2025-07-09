@@ -1,0 +1,56 @@
+id: aws-cdk-typescript
+name: AWS CDK (TypeScript)
+description: AWS Cloud Development Kit project with TypeScript
+category: Infrastructure as Code
+language: TypeScript
+version: 1.0.0
+author: CloudyCS
+tags:
+  - aws
+  - cdk
+  - typescript
+  - infrastructure
+  - cloud
+
+variables:
+  - name: projectName
+    description: Project name
+    required: true
+  - name: description
+    description: Project description
+    default: "AWS CDK project"
+  - name: authorName
+    description: Author name
+    default: "Your Name"
+  - name: authorEmail
+    description: Author email
+    default: "your.email@example.com"
+
+dependencies:
+  - aws-cdk-lib
+  - constructs
+  - source-map-support
+
+devDependencies:
+  - "@types/jest"
+  - "@types/node"
+  - "jest"
+  - "ts-jest"
+  - "aws-cdk"
+  - "typescript"
+
+nextSteps:
+  - "npm run build"
+  - "cdk bootstrap  # (if first time using CDK in this region)"
+  - "cdk deploy"
+  - "cdk diff       # to see changes"
+  - "cdk destroy    # to clean up resources"
+
+processExtensions:
+  - .ts
+  - .js
+  - .json
+  - .md
+  - .txt
+  - .yaml
+  - .yml

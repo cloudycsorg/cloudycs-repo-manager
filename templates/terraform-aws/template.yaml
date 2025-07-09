@@ -1,0 +1,40 @@
+id: terraform-aws
+name: Terraform (AWS)
+description: Terraform project for AWS infrastructure
+category: Infrastructure as Code
+language: HCL
+version: 1.0.0
+author: CloudyCS
+tags:
+  - terraform
+  - aws
+  - infrastructure
+  - cloud
+
+variables:
+  - name: projectName
+    description: Project name
+    required: true
+  - name: description
+    description: Project description
+    default: "Terraform AWS project"
+  - name: awsRegion
+    description: AWS region
+    default: "us-east-1"
+  - name: environment
+    description: Environment name
+    default: "dev"
+
+nextSteps:
+  - "terraform init"
+  - "terraform plan"
+  - "terraform apply"
+  - "terraform destroy  # to clean up resources"
+
+processExtensions:
+  - .tf
+  - .tfvars
+  - .md
+  - .txt
+  - .yaml
+  - .yml

@@ -1,0 +1,38 @@
+id: next-js
+name: Next.js React App
+description: Modern Next.js React application with TypeScript
+category: Web Development
+language: TypeScript
+version: 1.0.0
+author: CloudyCS
+tags:
+  - nextjs
+  - react
+  - typescript
+  - web
+  - frontend
+
+variables:
+  - name: projectName
+    description: Project name
+    required: true
+  - name: description
+    description: Project description
+    default: "Next.js React application"
+  - name: authorName
+    description: Author name
+    default: "Your Name"
+
+nextSteps:
+  - "npm install"
+  - "npm run dev"
+  - "Open http://localhost:3000"
+
+processExtensions:
+  - .js
+  - .ts
+  - .tsx
+  - .json
+  - .md
+  - .yaml
+  - .yml

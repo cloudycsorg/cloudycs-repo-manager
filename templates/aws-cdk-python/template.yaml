@@ -1,0 +1,47 @@
+id: aws-cdk-python
+name: AWS CDK (Python)
+description: AWS Cloud Development Kit project with Python
+category: Infrastructure as Code
+language: Python
+version: 1.0.0
+author: CloudyCS
+tags:
+  - aws
+  - cdk
+  - python
+  - infrastructure
+  - cloud
+
+variables:
+  - name: projectName
+    description: Project name
+    required: true
+  - name: description
+    description: Project description
+    default: "AWS CDK project"
+  - name: authorName
+    description: Author name
+    default: "Your Name"
+  - name: authorEmail
+    description: Author email
+    default: "your.email@example.com"
+
+dependencies:
+  - aws-cdk-lib
+  - constructs
+  - pytest
+  - aws-cdk.assertions
+
+nextSteps:
+  - "cdk bootstrap  # (if first time using CDK in this region)"
+  - "cdk deploy"
+  - "cdk diff       # to see changes"
+  - "cdk destroy    # to clean up resources"
+
+processExtensions:
+  - .py
+  - .json
+  - .md
+  - .txt
+  - .yaml
+  - .yml

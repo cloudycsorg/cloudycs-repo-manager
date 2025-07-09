@@ -1,0 +1,17 @@
+{
+    "name": "{{projectName}}",
+    "version": "0.1.0",
+    "description": "{{description}}",
+    "main": "app.py",
+    "scripts": {
+        "build": "cdk synth",
+        "watch": "cdk watch",
+        "test": "python -m pytest",
+        "test:watch": "ptw --runner \"python -m pytest\""
+    },
+    "author": "{{authorName}} <{{authorEmail}}>",
+    "license": "MIT",
+    "devDependencies": {
+        "aws-cdk": "2.x"
+    }
+}

@@ -1,0 +1,41 @@
+id: terraform-azure
+name: Terraform (Azure)
+description: Terraform project for Azure infrastructure
+category: Infrastructure as Code
+language: HCL
+version: 1.0.0
+author: CloudyCS
+tags:
+  - terraform
+  - azure
+  - infrastructure
+  - cloud
+
+variables:
+  - name: projectName
+    description: Project name
+    required: true
+  - name: description
+    description: Project description
+    default: "Terraform Azure project"
+  - name: azureRegion
+    description: Azure region
+    default: "East US"
+  - name: environment
+    description: Environment name
+    default: "dev"
+
+nextSteps:
+  - "az login  # (if not already authenticated)"
+  - "terraform init"
+  - "terraform plan"
+  - "terraform apply"
+  - "terraform destroy  # to clean up resources"
+
+processExtensions:
+  - .tf
+  - .tfvars
+  - .md
+  - .txt
+  - .yaml
+  - .yml

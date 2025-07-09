@@ -1,0 +1,53 @@
+id: python-fastapi
+name: FastAPI Python
+description: FastAPI Python microservice with modern best practices
+category: Microservices
+language: Python
+version: 1.0.0
+author: CloudyCS
+tags:
+  - python
+  - fastapi
+  - api
+  - microservice
+  - rest
+
+variables:
+  - name: projectName
+    description: Project name
+    required: true
+  - name: description
+    description: Project description
+    default: "FastAPI microservice"
+  - name: authorName
+    description: Author name
+    default: "Your Name"
+  - name: authorEmail
+    description: Author email
+    default: "your.email@example.com"
+
+dependencies:
+  - fastapi
+  - uvicorn
+  - pydantic
+  - python-multipart
+  - python-jose[cryptography]
+  - passlib[bcrypt]
+  - sqlalchemy
+  - alembic
+  - pytest
+  - httpx
+
+nextSteps:
+  - "python -m venv .venv"
+  - "source .venv/bin/activate  # On Windows: .venv\\Scripts\\activate"
+  - "pip install -r requirements.txt"
+  - "uvicorn app.main:app --reload"
+
+processExtensions:
+  - .py
+  - .txt
+  - .md
+  - .yaml
+  - .yml
+  - .json
