@@ -21,11 +21,23 @@ class TemplateEngine {
     const configPath = path.join(templatePath, 'template.yaml');
     const config = await this.loadTemplateConfig(configPath);
 
+    // Merge variables with environment variables (for GitHub Actions)
+    const mergedVariables = {
+      ...variables,
+      projectName: variables.projectName || process.env.projectName,
+      description: variables.description || process.env.description || '',
+      authorName: variables.authorName || process.env.authorName || 'Your Name',
+      authorEmail: variables.authorEmail || process.env.authorEmail || 'your.email@example.com',
+      awsRegion: variables.awsRegion || process.env.awsRegion || 'us-east-1',
+      azureRegion: variables.azureRegion || process.env.azureRegion || 'East US',
+      environment: variables.environment || process.env.environment || 'dev'
+    };
+
     // Ensure output directory exists
     await fs.ensureDir(outputPath);
 
     // Process template files
-    await this.processTemplateDirectory(templatePath, outputPath, variables, config, '', '');
+    await this.processTemplateDirectory(templatePath, outputPath, mergedVariables, config, '', '');
   }
 
   async loadTemplateConfig(configPath) {

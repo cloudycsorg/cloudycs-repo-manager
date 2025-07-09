@@ -1,0 +1,258 @@
+name: 🚀 Create Project Repository
+
+on:
+  workflow_dispatch:
+    inputs:
+      template:
+        description: 'Project Template'
+        required: true
+        default: 'aws-cdk-python'
+        type: choice
+        options:
+          - aws-cdk-python
+          - aws-cdk-typescript
+          - terraform-aws
+          - terraform-azure
+          - python-fastapi
+          - next-js
+      project_name:
+        description: 'Project Name (e.g., my-awesome-project)'
+        required: true
+        type: string
+      project_description:
+        description: 'Project Description'
+        required: false
+        default: 'Generated project using CloudyCS Repository Manager'
+        type: string
+      author_name:
+        description: 'Author Name'
+        required: false
+        default: 'Your Name'
+        type: string
+      author_email:
+        description: 'Author Email'
+        required: false
+        default: 'your.email@example.com'
+        type: string
+      aws_region:
+        description: 'AWS Region (for AWS templates)'
+        required: false
+        default: 'us-east-1'
+        type: string
+      azure_region:
+        description: 'Azure Region (for Azure templates)'
+        required: false
+        default: 'East US'
+        type: string
+      environment:
+        description: 'Environment (dev/staging/prod)'
+        required: false
+        default: 'dev'
+        type: string
+      create_repository:
+        description: 'Create new GitHub repository?'
+        required: true
+        default: true
+        type: boolean
+      repository_visibility:
+        description: 'Repository Visibility'
+        required: false
+        default: 'private'
+        type: choice
+        options:
+          - private
+          - public
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  generate-project:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Repository Manager
+      uses: actions/checkout@v4
+      
+    - name: 🔧 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        
+    - name: 📦 Install Dependencies
+      run: npm ci
+      
+    - name: 🎯 Validate Template
+      run: |
+        node bin/repo-manager.js validate templates/${{ github.event.inputs.template }}
+        
+    - name: 🏗️ Generate Project
+      run: |
+        mkdir -p generated
+        node bin/repo-manager.js create \
+          --template ${{ github.event.inputs.template }} \
+          --name ${{ github.event.inputs.project_name }} \
+          --directory ./generated \
+          --no-git \
+          --no-install
+      env:
+        PROJECT_NAME: ${{ github.event.inputs.project_name }}
+        PROJECT_DESCRIPTION: ${{ github.event.inputs.project_description }}
+        AUTHOR_NAME: ${{ github.event.inputs.author_name }}
+        AUTHOR_EMAIL: ${{ github.event.inputs.author_email }}
+        AWS_REGION: ${{ github.event.inputs.aws_region }}
+        AZURE_REGION: ${{ github.event.inputs.azure_region }}
+        ENVIRONMENT: ${{ github.event.inputs.environment }}
+        
+    - name: 📋 List Generated Files
+      run: |
+        echo "Generated project structure:"
+        find generated/${{ github.event.inputs.project_name }} -type f | head -20
+        
+    - name: 📊 Generate Project Summary
+      run: |
+        cd generated/${{ github.event.inputs.project_name }}
+        echo "# 🚀 ${{ github.event.inputs.project_name }}" > PROJECT_INFO.md
+        echo "" >> PROJECT_INFO.md
+        echo "**Template Used:** ${{ github.event.inputs.template }}" >> PROJECT_INFO.md
+        echo "**Generated On:** $(date)" >> PROJECT_INFO.md
+        echo "**Author:** ${{ github.event.inputs.author_name }}" >> PROJECT_INFO.md
+        echo "" >> PROJECT_INFO.md
+        echo "## 📁 Project Structure" >> PROJECT_INFO.md
+        echo "\`\`\`" >> PROJECT_INFO.md
+        find . -type f -not -path "./.git/*" | sort >> PROJECT_INFO.md
+        echo "\`\`\`" >> PROJECT_INFO.md
+        echo "" >> PROJECT_INFO.md
+        echo "## 🚀 Getting Started" >> PROJECT_INFO.md
+        echo "" >> PROJECT_INFO.md
+        case "${{ github.event.inputs.template }}" in
+          "aws-cdk-python")
+            echo "1. \`pip install -r requirements.txt\`" >> PROJECT_INFO.md
+            echo "2. \`cdk bootstrap\`" >> PROJECT_INFO.md
+            echo "3. \`cdk deploy\`" >> PROJECT_INFO.md
+            ;;
+          "aws-cdk-typescript")
+            echo "1. \`npm install\`" >> PROJECT_INFO.md
+            echo "2. \`npm run build\`" >> PROJECT_INFO.md
+            echo "3. \`cdk bootstrap\`" >> PROJECT_INFO.md
+            echo "4. \`cdk deploy\`" >> PROJECT_INFO.md
+            ;;
+          "terraform-aws"|"terraform-azure")
+            echo "1. \`terraform init\`" >> PROJECT_INFO.md
+            echo "2. \`terraform plan\`" >> PROJECT_INFO.md
+            echo "3. \`terraform apply\`" >> PROJECT_INFO.md
+            ;;
+          "python-fastapi")
+            echo "1. \`python -m venv .venv\`" >> PROJECT_INFO.md
+            echo "2. \`source .venv/bin/activate\`" >> PROJECT_INFO.md
+            echo "3. \`pip install -r requirements.txt\`" >> PROJECT_INFO.md
+            echo "4. \`uvicorn app.main:app --reload\`" >> PROJECT_INFO.md
+            ;;
+          "next-js")
+            echo "1. \`npm install\`" >> PROJECT_INFO.md
+            echo "2. \`npm run dev\`" >> PROJECT_INFO.md
+            ;;
+        esac
+        echo "" >> PROJECT_INFO.md
+        echo "---" >> PROJECT_INFO.md
+        echo "*Generated by [CloudyCS Repository Manager](https://github.com/${{ github.repository }})*" >> PROJECT_INFO.md
+        
+    - name: 🔄 Create GitHub Repository
+      if: ${{ github.event.inputs.create_repository == 'true' }}
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const { data: repo } = await github.rest.repos.createForAuthenticatedUser({
+            name: '${{ github.event.inputs.project_name }}',
+            description: '${{ github.event.inputs.project_description }}',
+            private: ${{ github.event.inputs.repository_visibility == 'private' }},
+            auto_init: false
+          });
+          
+          console.log(`✅ Created repository: ${repo.html_url}`);
+          core.setOutput('repository_url', repo.html_url);
+          core.setOutput('repository_clone_url', repo.clone_url);
+          
+    - name: 📤 Upload Generated Project
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ github.event.inputs.project_name }}-${{ github.event.inputs.template }}
+        path: generated/${{ github.event.inputs.project_name }}
+        retention-days: 30
+        
+    - name: 📨 Create Release with Project
+      if: ${{ github.event.inputs.create_repository == 'true' }}
+      uses: actions/github-script@v7
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          const { execSync } = require('child_process');
+          
+          // Create a zip of the generated project
+          const projectPath = 'generated/${{ github.event.inputs.project_name }}';
+          const zipPath = '${{ github.event.inputs.project_name }}.zip';
+          
+          execSync(`cd generated && zip -r ../${zipPath} ${{ github.event.inputs.project_name }}`);
+          
+          // Read the project info
+          const projectInfo = fs.readFileSync(`${projectPath}/PROJECT_INFO.md`, 'utf8');
+          
+          // Create a release in the repository manager repo with the generated project
+          const release = await github.rest.repos.createRelease({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            tag_name: `generated-${{ github.event.inputs.project_name }}-${Date.now()}`,
+            name: `🚀 Generated: ${{ github.event.inputs.project_name }}`,
+            body: `# Generated Project: ${{ github.event.inputs.project_name }}
+            
+          **Template:** ${{ github.event.inputs.template }}
+          **Generated by:** ${{ github.actor }}
+          **Generated at:** ${new Date().toISOString()}
+
+          ## Project Details
+          ${projectInfo}
+
+          ## Download
+          Download the generated project files from the assets below.`,
+            draft: false,
+            prerelease: true
+          });
+          
+          // Upload the zip as a release asset
+          const zipBuffer = fs.readFileSync(zipPath);
+          await github.rest.repos.uploadReleaseAsset({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            release_id: release.data.id,
+            name: zipPath,
+            data: zipBuffer
+          });
+          
+          console.log(`✅ Created release: ${release.data.html_url}`);
+          
+    - name: 🎉 Workflow Summary
+      run: |
+        echo "## 🎉 Project Generation Complete!" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Project Name:** ${{ github.event.inputs.project_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Template Used:** ${{ github.event.inputs.template }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Author:** ${{ github.event.inputs.author_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📥 Downloads Available" >> $GITHUB_STEP_SUMMARY
+        echo "- Check the **Artifacts** section of this workflow run" >> $GITHUB_STEP_SUMMARY
+        echo "- Look for releases in this repository" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        if [ "${{ github.event.inputs.create_repository }}" == "true" ]; then
+          echo "### 🏠 New Repository" >> $GITHUB_STEP_SUMMARY
+          echo "A new repository **${{ github.event.inputs.project_name }}** has been created in your account." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+        fi
+        echo "### 🚀 Next Steps" >> $GITHUB_STEP_SUMMARY
+        echo "1. Download the generated project files" >> $GITHUB_STEP_SUMMARY
+        echo "2. Extract to your local development environment" >> $GITHUB_STEP_SUMMARY
+        echo "3. Follow the instructions in the generated README.md" >> $GITHUB_STEP_SUMMARY
+        echo "4. Start building your awesome project!" >> $GITHUB_STEP_SUMMARY
