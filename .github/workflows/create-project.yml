@@ -1,5 +1,11 @@
 name: ⚡ Advanced - Create Project Repository
 
+# NOTE: This workflow requires a Personal Access Token (PAT) with repo creation permissions
+# See REPOSITORY_CREATION_SETUP.md for detailed setup instructions
+permissions:
+  contents: read
+  actions: read
+
 on:
   workflow_dispatch:
     inputs:
