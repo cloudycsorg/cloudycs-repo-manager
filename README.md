@@ -41,6 +41,7 @@
 
 1. **[Click here to start](../../actions/workflows/create-repository.yml)**
 2. **Fill the form:**
+
    ```yaml
    Template: aws-cdk-python
    Project Name: my-aws-infrastructure  
@@ -50,6 +51,7 @@
    Repository Name: my-aws-infrastructure
    Make Private: false
    ```
+
 3. **Click "Run workflow"** → Get a complete AWS CDK project in a new repository!
 
 ### 🎁 **What You Get**
@@ -91,6 +93,7 @@
 ```
 
 **What happens next?** A new GitHub repository will be created with:
+
 - ✅ Complete AWS CDK Python project
 - ✅ Lambda functions and API Gateway
 - ✅ Professional documentation  
@@ -123,16 +126,19 @@ npm link
 ## Quick Start
 
 ### Interactive Mode
+
 ```bash
 repo-manager create --interactive
 ```
 
 ### Direct Creation
+
 ```bash
 repo-manager create --template aws-cdk-python --name my-cdk-project
 ```
 
 ### List Available Templates
+
 ```bash
 repo-manager list
 ```
@@ -206,9 +212,11 @@ repo-manager update
 ## Command Reference
 
 ### `create`
+
 Create a new project from a template.
 
 **Options:**
+
 - `-t, --template <type>`: Template type
 - `-n, --name <name>`: Project name
 - `-d, --directory <path>`: Output directory (default: current directory)
@@ -217,26 +225,33 @@ Create a new project from a template.
 - `--no-install`: Skip dependency installation
 
 ### `list`
+
 List available templates.
 
 **Options:**
+
 - `-c, --category <category>`: Filter by category
 - `-l, --language <language>`: Filter by language
 
 ### `add-template`
+
 Add a custom template.
 
 **Options:**
+
 - `-p, --path <path>`: Path to template directory
 - `-n, --name <name>`: Template name
 
 ### `validate`
+
 Validate a template configuration.
 
 ### `update`
+
 Update templates to latest versions.
 
 **Options:**
+
 - `-t, --template <template>`: Update specific template
 
 ## Template Structure
@@ -316,6 +331,7 @@ repo-manager create \
 ```
 
 This creates:
+
 - CDK app with Python
 - Virtual environment setup
 - Example stack with SQS and SNS
@@ -331,6 +347,7 @@ repo-manager create \
 ```
 
 This creates:
+
 - Terraform configuration for AWS
 - Provider setup with default tags
 - Example VPC resources
@@ -344,6 +361,7 @@ repo-manager create --interactive
 ```
 
 Guides you through:
+
 1. Category selection
 2. Template selection
 3. Project configuration
@@ -352,12 +370,14 @@ Guides you through:
 ## Creating Custom Templates
 
 1. **Create Template Directory Structure**
+
    ```bash
    mkdir my-custom-template
    cd my-custom-template
    ```
 
 2. **Create Template Configuration**
+
    ```yaml
    # template.yaml
    id: my-custom-template
@@ -369,6 +389,7 @@ Guides you through:
    ```
 
 3. **Add Template Files**
+
    ```
    my-custom-template/
    ├── template.yaml
@@ -379,6 +400,7 @@ Guides you through:
    ```
 
 4. **Add Template to Registry**
+
    ```bash
    repo-manager add-template --path ./my-custom-template --name my-custom-template
    ```
@@ -386,6 +408,7 @@ Guides you through:
 ## Configuration
 
 Custom templates are stored in:
+
 - **Linux/macOS**: `~/.cloudycs-repo-manager/templates/`
 - **Windows**: `%USERPROFILE%\.cloudycs-repo-manager\templates\`
 
@@ -408,16 +431,19 @@ Custom templates are stored in:
 ### Common Issues
 
 **Permission Errors**
+
 ```bash
 sudo npm install -g cloudycs-repo-manager
 ```
 
 **Template Not Found**
+
 ```bash
 repo-manager list  # Check available templates
 ```
 
 **Dependency Installation Fails**
+
 ```bash
 repo-manager create --template mytemplate --name myproject --no-install
 cd myproject
@@ -427,6 +453,7 @@ cd myproject
 ### Debug Mode
 
 Set environment variable for verbose output:
+
 ```bash
 DEBUG=repo-manager repo-manager create --template aws-cdk-python --name test
 ```
