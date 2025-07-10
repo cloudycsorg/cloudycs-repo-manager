@@ -32,4 +32,21 @@ describe('CloudyCS Repository Manager', () => {
     const commandsPath = path.join(srcPath, 'commands');
     expect(fs.existsSync(commandsPath)).toBe(true);
   });
+
+  test('GitHub Actions workflows exist and are properly configured', () => {
+    const workflowsPath = path.join(__dirname, '..', '.github', 'workflows');
+    expect(fs.existsSync(workflowsPath)).toBe(true);
+    
+    // Check that key workflow files exist
+    const createRepoWorkflow = path.join(workflowsPath, 'create-repository.yml');
+    const createProjectWorkflow = path.join(workflowsPath, 'create-project.yml');
+    
+    expect(fs.existsSync(createRepoWorkflow)).toBe(true);
+    expect(fs.existsSync(createProjectWorkflow)).toBe(true);
+    
+    // Verify workflows reference organization secrets
+    const createRepoContent = fs.readFileSync(createRepoWorkflow, 'utf8');
+    expect(createRepoContent).toContain('ORG_APP_ID');
+    expect(createRepoContent).toContain('ORG_PRIVATE_KEY');
+  });
 });

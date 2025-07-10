@@ -123,14 +123,19 @@ If you're getting this error, follow this **exact checklist**:
 4. If you changed permissions, scroll down and click **"Save changes"**
 5. **Important**: You must **reinstall the app** after permission changes
 
-### ✅ Checklist 2: Verify App Installation  
+### ✅ Checklist 2: **CRITICAL** - Install App on Organization
+
+**⚠️ This is the most commonly missed step!**
 
 1. In your GitHub App → **Install App** (left sidebar)
-2. Check if it shows "Installed" next to your organization
-3. If not installed:
-   - Click **"Install"** next to your organization
-   - Select **"All repositories"** 
+2. Look for "cloudycsorg" in the list
+3. **If it shows "Install"** - click it and install the app
+4. **If it shows "Installed"** - you're good
+5. When installing:
+   - Select **"All repositories"** (recommended)
    - Click **"Install"**
+
+**Common Error**: Creating a GitHub App ≠ Installing it. You must explicitly install it on your organization!
 
 ### ✅ Checklist 3: Verify Organization Secrets
 
