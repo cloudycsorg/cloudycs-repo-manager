@@ -165,10 +165,14 @@ jobs:
               console.log('   4. App must be installed on the target organization/user');
               console.log('');
               console.log('📖 Guide: https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app');
-              console.log('⚠️  Skipping repository creation...');
-              core.setOutput('repo_url', 'Permission denied - Check GitHub App permissions');
-              core.setOutput('clone_url', '');
-              return null;
+              console.log('');
+              console.log('🔧 Current App Permissions Detected:');
+              console.log('   - If you see this error, the app may be missing Administration: Write permission');
+              console.log('   - Go to your GitHub App settings and verify permissions');
+              console.log('   - After updating permissions, reinstall the app on the organization');
+              
+              core.setFailed('❌ WORKFLOW FAILED: GitHub App lacks repository creation permissions. Check app permissions and reinstall.');
+              throw new Error('GitHub App permission denied - missing Administration: Write permission');
             } else if (error.status === 422) {
               console.log(`ℹ️ Repository '${{ github.event.inputs.project_name }}' already exists`);
               const { data: existingRepo } = await github.rest.repos.get({
