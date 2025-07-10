@@ -458,6 +458,18 @@ Set environment variable for verbose output:
 DEBUG=repo-manager repo-manager create --template aws-cdk-python --name test
 ```
 
+## 🔒 **Security & Privacy Notice**
+
+This is a **public repository**. Please ensure:
+- ✅ **No private information** is committed to this repository
+- ✅ **Secrets are stored** in GitHub Organization/Repository Secrets only
+- ✅ **App IDs and tokens** are referenced via `${{ secrets.SECRET_NAME }}`
+- ✅ **Organization names** in documentation are kept generic
+
+The workflows use **GitHub Secrets** for authentication - never hardcode sensitive data.
+
+---
+
 ## 🌟 **Success Stories**
 
 > "Generated a complete AWS CDK project in 2 minutes and had it deployed in 10. This tool saved me hours of boilerplate setup!"  

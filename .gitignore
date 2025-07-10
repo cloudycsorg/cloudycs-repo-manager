@@ -123,3 +123,23 @@ demo-output/
 
 # Custom templates directory (user-specific)
 .cloudycs-repo-manager/
+
+# Security - Never commit these files
+.env
+.env.local
+.env.production
+.env.development
+*.pem
+*.p12
+*.key
+*secret*
+*token*
+*password*
+
+# GitHub App private keys
+private-key.pem
+app-private-key.pem
+
+# Organization-specific files
+*cloudycs*
+*organization*

@@ -128,7 +128,7 @@ If you're getting this error, follow this **exact checklist**:
 **⚠️ This is the most commonly missed step!**
 
 1. In your GitHub App → **Install App** (left sidebar)
-2. Look for "cloudycsorg" in the list
+2. Look for "your-organization-name" in the list
 3. **If it shows "Install"** - click it and install the app
 4. **If it shows "Installed"** - you're good
 5. When installing:
