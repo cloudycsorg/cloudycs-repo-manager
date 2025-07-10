@@ -461,6 +461,7 @@ DEBUG=repo-manager repo-manager create --template aws-cdk-python --name test
 ## 🔒 **Security & Privacy Notice**
 
 This is a **public repository**. Please ensure:
+
 - ✅ **No private information** is committed to this repository
 - ✅ **Secrets are stored** in GitHub Organization/Repository Secrets only
 - ✅ **App IDs and tokens** are referenced via `${{ secrets.SECRET_NAME }}`
